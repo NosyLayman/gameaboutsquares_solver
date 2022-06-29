@@ -22,7 +22,7 @@ fn to_dir(dir : &str) -> Dir {
     }
 }
 
-fn to_pos<'a, T : RuleType>(coord : Pair<'a, T>) -> Pos
+fn to_pos<T : RuleType>(coord : Pair<'_, T>) -> Pos
 {
     let mut coords = coord.into_inner();
     let x = coords.next().unwrap().as_str();
@@ -51,19 +51,19 @@ impl SquaresParser {
                                 let color : i8 = to_color(inner.next().unwrap().as_str());
                                 let pos = to_pos(inner.next().unwrap());
                                 let dir = to_dir(inner.next().unwrap().as_str());
-                                game.squares.push(Square {color: color, pos: pos, dir: dir});
+                                game.state.squares.push(Square {color, pos, dir});
                             }
                             Rule::goal => {
                                 let mut inner = field.into_inner();
                                 let color : i8 = to_color(inner.next().unwrap().as_str());
                                 let pos = to_pos(inner.next().unwrap());
-                                game.goals.push(Goal {color: color, pos: pos});
+                                game.data.goals.push(Goal {color, pos});
                             }
                             Rule::turn => {
                                 let mut inner = field.into_inner();
                                 let dir = to_dir(inner.next().unwrap().as_str());
                                 let pos = to_pos(inner.next().unwrap());
-                                game.turns.push(Turn {pos: pos, dir: dir});
+                                game.data.turns.push(Turn {pos, dir});
                             }
                             _ => unreachable!(),
                         }

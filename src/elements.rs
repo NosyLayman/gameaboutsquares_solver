@@ -29,7 +29,7 @@ pub struct Turn {
     pub dir: Dir,
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Square {
     pub pos: Pos,
     pub color: i8,
@@ -37,10 +37,20 @@ pub struct Square {
 }
 
 #[derive(Debug, Default)]
-pub struct Game {
-    pub squares: Vec<Square>,
+pub struct GameData {
     pub goals: Vec<Goal>,
     pub turns: Vec<Turn>,
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct State {
+    pub squares: Vec<Square>,
+}
+
+#[derive(Debug, Default)]
+pub struct Game {
+    pub data: GameData,
+    pub state: State,
 }
 
 impl Pos {
@@ -53,32 +63,46 @@ impl Pos {
         }
     }
     pub fn new(x: i8, y: i8) -> Pos {
-        Pos {x: x, y: y}
+        Pos {x, y}
+    }
+}
+
+impl GameData {
+    pub fn action(&self, state : &State, color: i8) -> State {
+        let mut ret = state.clone();
+        let mut acted = ret.squares.iter_mut().find(|e| e.color == color);
+        while let Some(ref mut sq) = acted {
+            sq.pos.step(sq.dir);
+            let p = sq.pos;
+            let c = sq.color;
+            acted = ret.squares.iter_mut().find(|e| e.pos == p && e.color != c);
+        }
+        ret
     }
 }
 
 impl Game {
     pub fn debug_print(&self) {
         let draw_colors = vec!["red", "green", "blue"];
-        if self.squares.is_empty() || self.goals.is_empty() {
+        if self.state.squares.is_empty() || self.data.goals.is_empty() {
             println!("Incomplete puzzle: {:#?}", &self);
             return;
         }
-        let mut tl = self.squares[0].pos;
+        let mut tl = self.state.squares[0].pos;
         let mut br = tl;
-        for e in &self.squares {
+        for e in &self.state.squares {
             tl.x = min(tl.x, e.pos.x);
             tl.y = min(tl.y, e.pos.y);
             br.x = max(br.x, e.pos.x);
             br.y = max(br.y, e.pos.y);
         }
-        for e in &self.goals {
+        for e in &self.data.goals {
             tl.x = min(tl.x, e.pos.x);
             tl.y = min(tl.y, e.pos.y);
             br.x = max(br.x, e.pos.x);
             br.y = max(br.y, e.pos.y);
         }
-        for e in &self.turns {
+        for e in &self.data.turns {
             tl.x = min(tl.x, e.pos.x);
             tl.y = min(tl.y, e.pos.y);
             br.x = max(br.x, e.pos.x);
@@ -91,14 +115,14 @@ impl Game {
                 let symbol;
                 let mut fg : i8 = -1i8;
                 let mut bg : i8 = -1i8;
-                let is_turn = self.turns.iter().find(|e| e.pos == curr_pos);
-                let is_goal = self.goals.iter().find(|e| e.pos == curr_pos);
-                let is_square = self.squares.iter().find(|e| e.pos == curr_pos);
-                if !is_goal.is_none() {
+                let is_turn = self.data.turns.iter().find(|e| e.pos == curr_pos);
+                let is_goal = self.data.goals.iter().find(|e| e.pos == curr_pos);
+                let is_square = self.state.squares.iter().find(|e| e.pos == curr_pos);
+                if let Some(goal) = is_goal {
                     match is_square {
-                        None => { symbol="\u{25CB}"; fg = is_goal.unwrap().color; },
+                        None => { symbol="\u{25CB}"; fg = goal.color; },
                         Some(sq) => {
-                            bg = is_goal.unwrap().color;
+                            bg = goal.color;
                             fg = sq.color;
                             match sq.dir {
                                 Dir::Up => { symbol="\u{25D3}"; },
@@ -108,8 +132,16 @@ impl Game {
                             }
                         }
                     }
-                } else if !is_turn.is_none() {
-                    if is_square.is_none() {
+                } else if let Some(turn) = is_turn {
+                    if let Some(sq) = is_square {
+                        fg = sq.color;
+                        match turn.dir {
+                            Dir::Up => { symbol="\u{25B2}"; },
+                            Dir::Down => { symbol="\u{25BC}"; },
+                            Dir::Left => { symbol="\u{25C0}"; },
+                            Dir::Right => { symbol="\u{25B6}"; },
+                        }
+                    } else {
                         match is_turn {
                             Some(turn) => {
                                 match turn.dir {
@@ -117,19 +149,6 @@ impl Game {
                                     Dir::Down => { symbol="\u{25BD}"; },
                                     Dir::Left => { symbol="\u{25C1}"; },
                                     Dir::Right => { symbol="\u{25B7}"; },
-                                }
-                            },
-                            None => unreachable!(),
-                        }
-                    } else {
-                        fg = is_square.unwrap().color;
-                        match is_turn {
-                            Some(turn) => {
-                                match turn.dir {
-                                    Dir::Up => { symbol="\u{25B2}"; },
-                                    Dir::Down => { symbol="\u{25BC}"; },
-                                    Dir::Left => { symbol="\u{25C0}"; },
-                                    Dir::Right => { symbol="\u{25B6}"; },
                                 }
                             },
                             None => unreachable!(),

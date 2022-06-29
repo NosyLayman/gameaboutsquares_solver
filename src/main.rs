@@ -1,5 +1,5 @@
 use gameaboutsquares_solver::*;
-use std::env;
+use std::{env};
 
 fn main() -> Result<(),i32> {
     let args: Vec<String> = env::args().collect();
@@ -9,5 +9,10 @@ fn main() -> Result<(),i32> {
     }
     let g = SquaresParser::parse_file(&args[1]);
     g.debug_print();
-    return Ok(());
+    let result = Solver::solve(g);
+    match result {
+        Some(path) => println!("{:?}", path),
+        None => println!("No solution found!"),
+    }
+    Ok(())
 }
