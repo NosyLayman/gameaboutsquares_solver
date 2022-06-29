@@ -1,0 +1,3 @@
+// puzzle 0: warmup
+A : 0 , 0 v
+A : 0 , 2

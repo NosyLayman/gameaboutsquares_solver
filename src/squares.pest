@@ -1,0 +1,12 @@
+WHITESPACE = _{ " " | "\t" }
+COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* ~NEWLINE }
+ending = _{ NEWLINE }
+color = { ASCII_ALPHA_UPPER }
+num = @{ ASCII_DIGIT+ }
+coord = { (num ~ "," ~ num) }
+dir = { ("^" | "v" | "<" | ">") }
+square = { color ~ ":" ~ coord ~ dir }
+goal = { color ~ ":" ~ coord }
+turn = { dir ~ ":" ~ coord }
+element = { (square | goal | turn) ~ ending }
+game = {SOI ~ element* ~ EOI }
