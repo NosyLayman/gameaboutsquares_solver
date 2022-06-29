@@ -8,7 +8,7 @@ fn main() -> Result<(),i32> {
         return Err(1);
     }
     let g = SquaresParser::parse_file(&args[1]);
-    g.debug_print();
+    debug_print(&g.state, &g.data);
     let result = Solver::solve(g);
     match result {
         Some(path) => println!("{:?}", path),
