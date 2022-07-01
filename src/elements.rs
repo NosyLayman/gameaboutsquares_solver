@@ -1,14 +1,14 @@
 use core::cmp::{min,max};
 use colored::{Colorize,ColoredString,Color};
 
-#[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Hash)]
 pub struct Pos {
     // using screen coordinates, y increases downwards
     pub x: i8,
     pub y: i8,
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 #[repr(i8)]
 pub enum Dir {
     Up,
@@ -29,7 +29,7 @@ pub struct Turn {
     pub dir: Dir,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Square {
     pub pos: Pos,
     pub color: i8,
@@ -42,7 +42,7 @@ pub struct GameData {
     pub turns: Vec<Turn>,
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Eq, PartialEq, Hash)]
 pub struct State {
     pub squares: Vec<Square>,
 }
@@ -98,7 +98,7 @@ impl GameData {
 
 
 pub fn debug_print(state: &State, data: &GameData) {
-    let draw_colors = vec!["red", "green", "blue"];
+    let draw_colors = vec!["red", "green", "blue", "magenta", "cyan", "yellow"];
     if state.squares.is_empty() || data.goals.is_empty() {
         println!("Incomplete puzzle: {:#?} {:#?}", &state, &data);
         return;
