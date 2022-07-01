@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\t" }
 COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* ~NEWLINE }
 ending = _{ NEWLINE }
-color = { ASCII_ALPHA_UPPER }
+color = @{ ASCII_ALPHA_UPPER ~ ASCII_ALPHA_LOWER* }
 num = @{ ASCII_DIGIT+ }
 coord = { (num ~ "," ~ num) }
 dir = { ("^" | "v" | "<" | ">") }

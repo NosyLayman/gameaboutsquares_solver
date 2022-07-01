@@ -1,7 +1,7 @@
-A:1,0
-A:1,1 v
+Black:1,0
+Black:1,1 v
 v:1,1
-C:1,2
-B:3,3 <
-B:0,4
-C:2,5 ^
+Blue:1,2
+Yellow:3,3 <
+Yellow:0,4
+Blue:2,5 ^

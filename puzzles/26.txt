@@ -1,0 +1,11 @@
+Black:0,0
+Blue:1,0
+Green:2,0
+Red:3,0
+Yellow:4,0
+Red:0,2 >
+Yellow:1,2 v
+Green:2,2 <
+Blue:3,2 v
+Black:4,2 <
+^:2,3

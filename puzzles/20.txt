@@ -1,0 +1,13 @@
+Black:0,0 v
+v:0,0
+Green:1,0
+Purple:2,0 <
+<:2,0
+Black:0,1
+Gray:2,1
+Green:0,2 >
+>:0,2
+Purple:1,2
+Gray:2,2 ^
+^:2,2
+^:0,4

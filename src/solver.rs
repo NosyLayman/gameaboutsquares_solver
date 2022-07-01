@@ -5,7 +5,7 @@ use std::convert::TryInto;
 pub struct Solver;
 
 impl Solver {
-    pub fn solve(puzzle: Game) -> Option<Vec<i8>> {
+    pub fn solve(puzzle: Game) -> Option<Vec<String>> {
         let data = &puzzle.data;
         let initial_state = &puzzle.state;
         let mut states = HashSet::new();
@@ -15,7 +15,7 @@ impl Solver {
         for action in 0..actors_num {
             let next_state = data.action(initial_state, action);
             if data.won(&next_state) {
-                return Some(vec![action])
+                return Some(vec![data.color_map[action as usize].clone()])
             }
             parents.push((0, action));
             queue.push_back(next_state);
@@ -29,10 +29,10 @@ impl Solver {
                     let next_state = data.action(&parent, action);
                     if data.won(&next_state) {
                         println!("Explored {} states", parents.len());
-                        let mut result = vec![action];
+                        let mut result = vec![data.color_map[action as usize].clone()];
                         while index != 0 {
                             let (next_index, action) = parents.swap_remove(index - 1);
-                            result.push(action);
+                            result.push(data.color_map[action as usize].clone());
                             index = next_index;
                         }
                         result.reverse();

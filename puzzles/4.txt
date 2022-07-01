@@ -1,6 +1,6 @@
-A:1,0 v
-B:0,1 >
-A:1,1
-C:2,1 v
-C:2,2
-B:3,3
+Red:1,0 v
+Blue:0,1 >
+Red:1,1
+Black:2,1 v
+Black:2,2
+Blue:3,3

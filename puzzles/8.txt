@@ -1,6 +1,6 @@
-A:0,0 v
-A:2,0
-B:3,0
-B:0,2 >
+Yellow:0,0 v
+Yellow:2,0
+Black:3,0
+Black:0,2 >
 >:0,2
 ^:2,2

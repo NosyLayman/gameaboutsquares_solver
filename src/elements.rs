@@ -40,6 +40,7 @@ pub struct Square {
 pub struct GameData {
     pub goals: Vec<Goal>,
     pub turns: Vec<Turn>,
+    pub color_map: Vec<String>,
 }
 
 #[derive(Debug, Default, Clone, Eq, PartialEq, Hash)]

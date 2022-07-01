@@ -7,8 +7,13 @@ use crate::pest::{Parser,iterators::Pair,RuleType};
 #[grammar = "squares.pest"]
 pub struct SquaresParser;
 
-fn to_color(color : &str) -> i8 {
-    (color.chars().next().unwrap() as i8) - ('A' as i8)
+fn to_color(color : &str, vec : & mut Vec<String>) -> i8 {
+    //(color.chars().next().unwrap() as i8) - ('A' as i8)
+    if let Some(pos) = vec.iter().position(|e| e == color) {
+        return pos as i8;
+    }
+    vec.push(color.to_string());
+    (vec.len() - 1) as i8
 }
 
 fn to_dir(dir : &str) -> Dir {
@@ -48,14 +53,14 @@ impl SquaresParser {
                         match field.as_rule() {
                             Rule::square => {
                                 let mut inner = field.into_inner();
-                                let color : i8 = to_color(inner.next().unwrap().as_str());
+                                let color : i8 = to_color(inner.next().unwrap().as_str(), & mut game.data.color_map);
                                 let pos = to_pos(inner.next().unwrap());
                                 let dir = to_dir(inner.next().unwrap().as_str());
                                 game.state.squares.push(Square {color, pos, dir});
                             }
                             Rule::goal => {
                                 let mut inner = field.into_inner();
-                                let color : i8 = to_color(inner.next().unwrap().as_str());
+                                let color : i8 = to_color(inner.next().unwrap().as_str(), & mut game.data.color_map);
                                 let pos = to_pos(inner.next().unwrap());
                                 game.data.goals.push(Goal {color, pos});
                             }
