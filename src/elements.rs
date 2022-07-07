@@ -68,6 +68,28 @@ impl Pos {
     }
 }
 
+pub struct Area {
+    tl: Pos,
+    br: Pos,
+}
+
+impl Area {
+    pub fn new(tl: &Pos, br: &Pos) -> Area {
+        assert!(tl.x <= br.x);
+        assert!(tl.y <= br.y);
+        Area {tl: *tl, br: *br}
+    }
+    pub fn inside(&self, pos: &Pos) -> bool {
+        self.tl.x <= pos.x && pos.x <= self.br.y && self.tl.y <= pos.y && pos.y <= self.br.y
+    }
+    pub fn tl(&self) -> Pos {
+        self.tl
+    }
+    pub fn br(&self) -> Pos {
+        self.br
+    }
+}
+
 impl GameData {
     pub fn action(&self, state: &State, color: i8) -> State {
         let mut ret = state.clone();
@@ -97,13 +119,9 @@ impl GameData {
     }
 }
 
+pub fn get_area(state: &State, data: &GameData) -> Area {
+    assert!(!state.squares.is_empty());
 
-pub fn debug_print(state: &State, data: &GameData) {
-    let draw_colors = vec!["red", "green", "blue", "magenta", "cyan", "yellow"];
-    if state.squares.is_empty() || data.goals.is_empty() {
-        println!("Incomplete puzzle: {:#?} {:#?}", &state, &data);
-        return;
-    }
     let mut tl = state.squares[0].pos;
     let mut br = tl;
     for e in &state.squares {
@@ -124,6 +142,19 @@ pub fn debug_print(state: &State, data: &GameData) {
         br.x = max(br.x, e.pos.x);
         br.y = max(br.y, e.pos.y);
     }
+
+    Area{tl, br}
+}
+
+pub fn debug_print(state: &State, data: &GameData) {
+    let draw_colors = vec!["red", "green", "blue", "magenta", "cyan", "yellow"];
+    if state.squares.is_empty() || data.goals.is_empty() {
+        println!("Incomplete puzzle: {:#?} {:#?}", &state, &data);
+        return;
+    }
+    let area = get_area(&state, &data);
+    let tl = area.tl();
+    let br = area.br();
     for y in tl.y..=br.y {
         let mut line = String::default();
         for x in tl.x..=br.x {

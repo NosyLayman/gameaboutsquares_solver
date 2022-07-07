@@ -8,6 +8,15 @@ impl Solver {
     pub fn solve(puzzle: Game) -> Option<Vec<String>> {
         let data = &puzzle.data;
         let initial_state = &puzzle.state;
+        let area = get_area(initial_state, data);
+        let mut tl = area.tl();
+        let mut br = area.br();
+        let num_sq = initial_state.squares.len() - 1;
+        tl.x-=num_sq as i8;
+        tl.y-=num_sq as i8;
+        br.x+=num_sq as i8;
+        br.y+=num_sq as i8;
+        let area = Area::new(&tl, &br);
         let mut states = HashSet::new();
         let actors_num: i8 = initial_state.squares.len().try_into().unwrap();
         let mut parents = Vec::new();
@@ -38,6 +47,9 @@ impl Solver {
                         result.reverse();
                         return Some(result);
                     } else {
+                        if next_state.squares.iter().any(|sq| !area.inside(&sq.pos)) {
+                            continue;
+                        }
                         parents.push((index, action));
                         queue.push_back(next_state);
                     }
